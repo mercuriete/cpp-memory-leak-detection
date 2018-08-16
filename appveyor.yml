@@ -4,6 +4,7 @@ version: "{build}"
 os:
   - Visual Studio 2017
   - Visual Studio 2015
+  - Visual Studio 2013
 
 init:
   - git config --global core.autocrlf input
@@ -35,5 +36,5 @@ build:
   verbosity: normal                     # MSBuild verbosity level {quiet|minimal|normal|detailed}
 
 test_script:
-  - cd Build
-  - ctest -V -j 2 -C %CONFIGURATION%
+  - cd Build\app\%CONFIGURATION%
+  - ModernCppCIApp.exe

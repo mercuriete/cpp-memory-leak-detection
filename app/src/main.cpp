@@ -1,17 +1,20 @@
 /*
  *  Distributed under the MIT License (See accompanying file /LICENSE )
  */
-#include "calc.h"
-#include "logger.h"
+
+#include "memory_leak.h"
+#include <iostream>
+#include <string>
+
+using namespace std;
 
 int main(int argc, char *argv[]) {
-  using namespace ModernCppCI;
-  Logger::level(LogLevel::info);
+  string* leaking_pointer = nullptr;//new string("leaking object");
 
-  Logger log{__func__};
-
-  log.info("doing some calculation");
-  log.info(Calc{} << 1 << "+" << 2 << "*" << 5 << "-" << 3 << "/" << 4);
+  //You forgot to delete pointer
+  leaking_pointer = new string("Hello, World!");
+  cout << *leaking_pointer << endl;
+  delete leaking_pointer;
 
   return 0;
 }

@@ -8,13 +8,14 @@ project (ModernCppCI)
 
 set_property (GLOBAL PROPERTY USE_FOLDERS ON)
 
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0 -Wall -fsanitize=leak")
+
 set (CMAKE_CXX_STANDARD 14)
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set (THREADS_PREFER_PTHREAD_FLAG ON)
 find_package (Threads REQUIRED)
 
-add_subdirectory (third_party EXCLUDE_FROM_ALL)
 add_subdirectory (lib)
 add_subdirectory (app)
 

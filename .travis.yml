@@ -6,43 +6,82 @@ matrix:
 
     # Linux C++14 GCC builds
     - os: linux
-      compiler: gcc
-      addons: &gcc6
+      compiler: gcc-8
+      addons:
         apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-6']
-      env: COMPILER='g++-6' BUILD_TYPE='Release'
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-8
+      env:
+        - COMPILER=g++-8
+        - BUILD_TYPE=Release
+        - DETECT_LEAKS=0
 
     - os: linux
-      compiler: gcc
-      addons: *gcc6
-      env: COMPILER='g++-6' BUILD_TYPE='Debug'
+      compiler: gcc-8
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-8
+      env:
+        - COMPILER=g++-8
+        - BUILD_TYPE=Debug
+        - DETECT_LEAKS=1
+        - CXX_FLAGS=-fuse-ld=gold
+      sudo: true
 
     # Linux C++14 Clang builds
     - os: linux
       compiler: clang
-      addons: &clang38
+      addons:
         apt:
-          sources: ['llvm-toolchain-precise-3.8', 'ubuntu-toolchain-r-test']
-          packages: ['clang-3.8']
-      env: COMPILER='clang++-3.8' BUILD_TYPE='Release'
+          sources:
+            - llvm-toolchain-trusty-6.0
+            - ubuntu-toolchain-r-test
+          packages:
+            - clang-6.0
+            - libstdc++-6-dev
+      env:
+        - COMPILER=clang++-6.0
+        - BUILD_TYPE=Release
+        - DETECT_LEAKS=0
 
     - os: linux
       compiler: clang
-      addons: *clang38
-      env: COMPILER='clang++-3.8' BUILD_TYPE='Debug'
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-6.0
+            - ubuntu-toolchain-r-test
+          packages:
+            - clang-6.0
+            - libstdc++-6-dev
+      env:
+        - COMPILER=clang++-6.0
+        - BUILD_TYPE=Debug
+        - DETECT_LEAKS=1
+      sudo: true
 
     # OSX C++14 Clang Builds
 
     - os: osx
       osx_image: xcode8.3
       compiler: clang
-      env: COMPILER='clang++' BUILD_TYPE='Debug'
+      env:
+        - COMPILER=clang++
+        - BUILD_TYPE=Release
+        - DETECT_LEAKS=0
 
-    - os: osx
-      osx_image: xcode8.3
-      compiler: clang
-      env: COMPILER='clang++' BUILD_TYPE='Release'
+#    - os: osx
+#      osx_image: xcode8.3
+#      compiler: clang
+#      env:
+#        - COMPILER=clang++
+#        - BUILD_TYPE=Debug
+#        - DETECT_LEAKS=1
 
 
 install:
@@ -60,9 +99,9 @@ install:
 before_script:
   - export CXX=${COMPILER}
   - cd ${TRAVIS_BUILD_DIR}
-  - cmake -H. -BBuild -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -Wdev
+  - cmake -H. -BBuild -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -Wdev -DCMAKE_CXX_FLAGS=${CXX_FLAGS}
   - cd Build
 
 script:
-  - make -j 2
-  - ctest -V -j 2
+  - make -j9
+  - ASAN_OPTIONS=detect_leaks=${DETECT_LEAKS} ./app/ModernCppCIApp
