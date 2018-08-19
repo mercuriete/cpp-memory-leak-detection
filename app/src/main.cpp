@@ -9,7 +9,7 @@
 using namespace std;
 
 int main(int argc, char *argv[]) {
-  string* leaking_pointer = nullptr;//new string("leaking object");
+  string* leaking_pointer = new string("leaking object");
 
   //You forgot to delete pointer
   leaking_pointer = new string("Hello, World!");
